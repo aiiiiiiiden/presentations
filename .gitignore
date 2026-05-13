@@ -1,0 +1,23 @@
+_workspace/
+.DS_Store
+**/.DS_Store
+**/node_modules/
+**/.env
+**/.venv/
+**/dist/
+**/data/alarms.json
+**/monitor.trigger
+**/scheduler/last-run.log
+**/scheduler/launchd.*.log
+
+# Vendor: external repos (fetched per README)
+**/vendor/
+
+# Local Claude Code state — machine-specific, never commit
+**/.claude/settings.local.json
+**/.claude/.humanize-kr-installed
+**/.claude/.humanize-*-installed
+
+# Override global ~/.gitignore_global which excludes settings.json / launch.json
+!**/.claude/settings.json
+!**/.claude/skills/**

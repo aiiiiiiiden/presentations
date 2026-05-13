@@ -1,0 +1,31 @@
+{
+  "name": "agent-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Demo: Claude Code as an autonomous agent (Telegram + Scheduler + Monitor)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "bot": "tsx src/bot.ts",
+    "scheduler": "tsx src/scheduler.ts",
+    "monitor": "tsx src/monitor.ts",
+    "monitor:fire": "touch monitor.trigger && echo '🔥 monitor.trigger written. The running monitor process will pick it up within MONITOR_POLL_MS.'",
+    "send": "tsx bin/send.ts",
+    "kis:smoke": "tsx bin/kis-smoke.ts",
+    "kis:server": "tsx src/kis-mcp/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "dotenv": "^16.4.5",
+    "grammy": "^1.30.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  }
+}

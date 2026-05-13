@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": ["Read", "Skill", "WebFetch", "WebSearch", "Write"],
+    "deny": [
+      "Bash",
+      "Edit",
+      "Grep",
+      "Glob",
+      "Task",
+      "TodoWrite",
+      "NotebookEdit"
+    ]
+  },
+  "enabledPlugins": {},
+  "enableAllProjectMcpServers": false,
+  "disabledMcpjsonServers": ["*"]
+}

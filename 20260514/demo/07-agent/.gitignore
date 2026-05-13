@@ -1,0 +1,9 @@
+.env
+node_modules/
+dist/
+*.log
+.DS_Store
+monitor.trigger
+data/
+scheduler/last-run.log
+scheduler/launchd.*.log

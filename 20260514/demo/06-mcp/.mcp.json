@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "kis-code-assistant-mcp": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "./vendor/open-trading-api/MCP/KIS Code Assistant MCP",
+        "run",
+        "server.py",
+        "--stdio"
+      ]
+    }
+  }
+}

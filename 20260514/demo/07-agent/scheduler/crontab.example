@@ -1,0 +1,24 @@
+# Example crontab — install with `crontab -e` and paste these lines.
+#
+# Daily SKT report at 7:00 AM (server time). Adjust hour/minute as needed.
+# Wrap absolute path because cron does NOT inherit your shell's cwd.
+
+# Make sure Homebrew bins and node tools are findable.
+PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
+
+# Daily 07:00 SKT report. Output appended to scheduler/last-run.log.
+0 7 * * * /Users/cody/presentations/20260514/demo/07-agent/scheduler/daily.sh
+
+# Optional: 18:00 market close summary.
+# 0 18 * * 1-5 /Users/cody/presentations/20260514/demo/07-agent/scheduler/daily.sh "오늘 KOSPI 종가 기준 통신 3사 시장 동향을 한 페이지로 정리해줘"
+
+# ---
+# Manual test (without cron):
+#   chmod +x scheduler/daily.sh
+#   ./scheduler/daily.sh
+#   tail -f scheduler/last-run.log
+#
+# Cron permissions on macOS:
+#   - System Settings → Privacy & Security → Full Disk Access → add /usr/sbin/cron
+#     (otherwise cron jobs can't read ~/.claude/ or your project files).
+#   - If still failing, prefer launchd (see scheduler/com.aizcorp.agent-demo.daily.plist).

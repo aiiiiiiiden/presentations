@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Skill",
+      "mcp__kis-code-assistant-mcp__*",
+      "mcp__kis-data__*"
+    ],
+    "deny": [
+      "Bash",
+      "Edit",
+      "Write",
+      "Grep",
+      "Glob",
+      "WebFetch",
+      "WebSearch",
+      "Task",
+      "TodoWrite",
+      "NotebookEdit"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["kis-code-assistant-mcp", "kis-data"]
+}

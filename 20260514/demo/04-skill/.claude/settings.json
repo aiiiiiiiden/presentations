@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": ["Read", "Skill"],
+    "deny": [
+      "Bash",
+      "Write",
+      "Edit",
+      "Grep",
+      "Glob",
+      "WebSearch",
+      "WebFetch",
+      "Task",
+      "TodoWrite",
+      "NotebookEdit"
+    ]
+  },
+  "enabledPlugins": {},
+  "enableAllProjectMcpServers": false,
+  "disabledMcpjsonServers": ["*"]
+}

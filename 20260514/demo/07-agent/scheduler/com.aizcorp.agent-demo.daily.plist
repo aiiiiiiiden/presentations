@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd plist alternative to cron (macOS-native).
+
+  Install:
+    cp scheduler/com.aizcorp.agent-demo.daily.plist ~/Library/LaunchAgents/
+    # edit the absolute paths inside to match your machine
+    launchctl load   ~/Library/LaunchAgents/com.aizcorp.agent-demo.daily.plist
+
+  Unload:
+    launchctl unload ~/Library/LaunchAgents/com.aizcorp.agent-demo.daily.plist
+
+  Why launchd over cron on macOS:
+    - keychain access works from a user-loaded LaunchAgent (cron does not)
+    - reliable across reboots/sleep wakeups
+    - logs go to dedicated files instead of mail
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.aizcorp.agent-demo.daily</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/cody/presentations/20260514/demo/07-agent/scheduler/daily.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/cody/presentations/20260514/demo/07-agent</string>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>7</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/cody/presentations/20260514/demo/07-agent/scheduler/launchd.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/cody/presentations/20260514/demo/07-agent/scheduler/launchd.err.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>
