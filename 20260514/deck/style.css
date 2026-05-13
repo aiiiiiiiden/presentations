@@ -22,15 +22,18 @@
 }
 
 /* 베이스 색·폰트 강제 적용 */
-html, body, #slidev-app {
+html, body, #slidev-app, .slidev-layout, .slidev-page {
   background-color: var(--slidev-theme-bg) !important;
   color: var(--slidev-theme-text) !important;
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+}
+
+/* 슬라이드 내 모든 텍스트 요소에 Pretendard 강제 — 코드 블록 제외 */
+.slidev-layout :not(pre):not(code):not(.font-mono) {
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 .slidev-layout {
-  background-color: var(--slidev-theme-bg) !important;
-  color: var(--slidev-theme-text);
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   letter-spacing: -0.01em;
   font-feature-settings: 'ss03', 'ss06';
 }

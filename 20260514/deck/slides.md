@@ -6,6 +6,8 @@ info: |
 fonts:
   sans: 'Pretendard'
   mono: 'JetBrains Mono'
+  local: 'Pretendard,JetBrains Mono'
+  provider: none
 colorSchema: dark
 highlighter: shiki
 download: true
