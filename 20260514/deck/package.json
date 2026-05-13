@@ -9,7 +9,7 @@
     "build": "slidev build",
     "export": "slidev export --format pdf --range 1-",
     "export:pptx": "slidev export --format pptx",
-    "present": "slidev --present"
+    "present": "slidev --open /presenter/"
   },
   "dependencies": {
     "@slidev/cli": "^0.49.29",
