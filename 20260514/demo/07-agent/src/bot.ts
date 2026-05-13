@@ -26,6 +26,10 @@ import {
 } from "./alarms/store.js";
 import { parseAlarm, parseIntent } from "./alarms/parser.js";
 import { startAlarmScheduler } from "./alarms/scheduler.js";
+import { parseWatch, parseWatchIntent } from "./watches/parser.js";
+import { getWatchManager } from "./watches/manager.js";
+import { destroyKisWs } from "./watches/kis-ws.js";
+import { getWatchesPath } from "./watches/store.js";
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN?.trim();
 if (!TOKEN) {
@@ -91,21 +95,35 @@ bot.on("message:text", async (ctx) => {
     return;
   }
 
-  // 1) Try alarm intents first (list / cancel / help)
+  // 1) Try watch intents (list / cancel / help)
+  const watchIntent = parseWatchIntent(text);
+  if (watchIntent) {
+    await handleWatchIntent(ctx, watchIntent);
+    return;
+  }
+
+  // 2) Try natural-language watch registration ("감시 SKT 50000 이하")
+  const parsedWatch = parseWatch(text);
+  if (parsedWatch) {
+    await handleWatchRegister(ctx, parsedWatch);
+    return;
+  }
+
+  // 3) Try alarm intents (list / cancel / help)
   const intent = parseIntent(text);
   if (intent) {
     await handleIntent(ctx, intent);
     return;
   }
 
-  // 2) Try natural-language alarm registration
+  // 4) Try natural-language alarm registration
   const parsedAlarm = parseAlarm(text);
   if (parsedAlarm) {
     await handleRegister(ctx, parsedAlarm);
     return;
   }
 
-  // 3) Fallback to direct Claude relay (the original Phase 1 behavior)
+  // 5) Fallback to direct Claude relay (the original Phase 1 behavior)
   await handleClaude(ctx, text);
 });
 
@@ -246,12 +264,121 @@ async function handleClaude(ctx: Context, text: string): Promise<void> {
   }
 }
 
+async function handleWatchIntent(
+  ctx: Context,
+  intent: NonNullable<ReturnType<typeof parseWatchIntent>>,
+): Promise<void> {
+  const chatId = ctx.chat!.id;
+  const mgr = getWatchManager();
+
+  if (intent.kind === "help") {
+    await ctx.reply(HELP_TEXT, { parse_mode: "Markdown" });
+    return;
+  }
+
+  if (intent.kind === "list") {
+    const watches = mgr.list(chatId);
+    if (watches.length === 0) {
+      await ctx.reply("👁 활성 감시가 없습니다.");
+      return;
+    }
+    const lines = watches.map((w) => {
+      const t = new Date(w.createdAt).toLocaleString("ko-KR", {
+        timeZone: "Asia/Seoul",
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+      const condLine =
+        w.conditionKind === "pct-of-open"
+          ? `📊 시초가 대비 ${w.op === "<=" ? "≤" : "≥"} ${w.threshold >= 0 ? "+" : ""}${w.threshold}%`
+          : `📉 ${w.op === "<=" ? "이하" : "이상"} ${w.threshold.toLocaleString("ko-KR")}원`;
+      return `\`${w.id}\` — ${w.tickerName} (${w.ticker})\n  ${condLine}\n  ⏱ 등록 ${t}`;
+    });
+    try {
+      await ctx.reply(`👁 활성 감시 ${watches.length}건:\n\n${lines.join("\n\n")}`, {
+        parse_mode: "Markdown",
+      });
+    } catch {
+      await ctx.reply(`활성 감시 ${watches.length}건:\n\n${lines.join("\n\n")}`);
+    }
+    return;
+  }
+
+  if (intent.kind === "cancel") {
+    const w = await mgr.cancel(intent.id, chatId);
+    if (w) {
+      try {
+        await ctx.reply(`🗑 감시 \`${w.id}\` (${w.tickerName}) 해제됨.`, {
+          parse_mode: "Markdown",
+        });
+      } catch {
+        await ctx.reply(`감시 ${w.id} (${w.tickerName}) 해제됨.`);
+      }
+      console.log(`[watches] cancelled id=${w.id} chat=${chatId}`);
+    } else {
+      await ctx.reply(
+        `❌ '${intent.id}' 를 찾을 수 없거나 이미 종료된 감시입니다.`,
+      );
+    }
+    return;
+  }
+}
+
+async function handleWatchRegister(
+  ctx: Context,
+  p: NonNullable<ReturnType<typeof parseWatch>>,
+): Promise<void> {
+  const chatId = ctx.chat!.id;
+  try {
+    const w = await getWatchManager().register({
+      chatId,
+      assetKind: p.assetKind,
+      ticker: p.ticker,
+      tickerName: p.tickerName,
+      conditionKind: p.conditionKind,
+      op: p.op,
+      threshold: p.threshold,
+    });
+    const condLine =
+      p.conditionKind === "pct-of-open"
+        ? `📊 시초가 대비 ${p.op === "<=" ? "≤" : "≥"} ${p.threshold >= 0 ? "+" : ""}${p.threshold}%`
+        : `📉 ${p.op === "<=" ? "이하" : "이상"} ${p.threshold.toLocaleString("ko-KR")}원`;
+    const trLabel = p.assetKind === "index" ? "지수" : "종목";
+    const msg =
+      `👁 감시 시작 (${trLabel})\n` +
+      `\`${w.id}\`\n` +
+      `${p.tickerName} (${p.ticker})\n` +
+      `${condLine}\n\n` +
+      `조건 만족 시 자동으로 알림 후 종료됩니다.\n` +
+      `취소: \`감시 해제 ${w.id}\` 또는 \`/unwatch ${w.id}\``;
+    try {
+      await ctx.reply(msg, { parse_mode: "Markdown" });
+    } catch {
+      await ctx.reply(msg);
+    }
+    console.log(
+      `[watches] registered id=${w.id} chat=${chatId} ${p.assetKind}/${p.ticker} ${p.conditionKind} op=${p.op} threshold=${p.threshold}`,
+    );
+  } catch (err) {
+    const m = err instanceof Error ? err.message : String(err);
+    await ctx.reply(`❌ 감시 등록 실패: ${m}`);
+  }
+}
+
 const HELP_TEXT = `*에이전트 봇 사용법*
 
 \`평문 메시지\` → Claude가 KIS 통로로 분석/응답
 \`5분 뒤 SKT 분석해줘\` → 5분 후 자동으로 분석 실행 + 결과 발송
 \`1시간 30분 뒤 점심시간 알림\` → 시각만 알람
 \`30초 뒤 hi\` → 빠른 테스트
+
+감시 (KIS WebSocket 실시간):
+종목 — \`감시 SKT 50000 이하\` / \`감시 017670 60000 이상\`
+       \`SKT 3% 빠지면 알림\` (시초가 대비)
+지수 — \`코스피 시초가 대비 2% 빠지면 알려줘\`
+       \`코스닥 +1% 이상\` / \`KOSPI200 -2% 이하\`
+관리 — \`감시 목록\` 또는 \`/watches\`
+       \`감시 해제 <id>\` 또는 \`/unwatch <id>\`
 
 알람 관리:
 \`알람 목록\` 또는 \`/alarms\` → 예약된 알람 보기
@@ -272,6 +399,7 @@ bot.catch((err) => {
 const me = await bot.api.getMe();
 console.log(`[ready] bot=@${me.username} cwd=${process.cwd()}`);
 console.log(`[ready] alarms store: ${getStorePath()}`);
+console.log(`[ready] watches store: ${getWatchesPath()}`);
 if (ALLOWED_CHAT_IDS.size === 0) {
   console.log("[ready] ⚠ ALLOWED_CHAT_IDS empty — bot will respond to anyone");
 } else {
@@ -279,10 +407,14 @@ if (ALLOWED_CHAT_IDS.size === 0) {
 }
 
 const scheduler = startAlarmScheduler();
+const watchManager = getWatchManager();
+await watchManager.start();
 
 const shutdown = (signal: string) => {
   console.log(`[shutdown] ${signal} received, stopping...`);
   scheduler.stop();
+  watchManager.stop();
+  destroyKisWs();
   void bot.stop();
 };
 process.once("SIGINT", () => shutdown("SIGINT"));
