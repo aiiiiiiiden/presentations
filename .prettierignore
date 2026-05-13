@@ -1,0 +1,4 @@
+# Slidev: 슬라이드별 frontmatter(---\nlayout:\n---)가 포매터에 의해
+# setext 헤딩으로 잘못 인식돼 망가짐. 포맷 대상에서 제외.
+**/slides.md
+20260514/deck/slides.md

@@ -1,0 +1,11 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+# Slidev 슬라이드 — 포매터 개입 금지
+[20260514/deck/slides.md]
+insert_final_newline = unset
+trim_trailing_whitespace = false
