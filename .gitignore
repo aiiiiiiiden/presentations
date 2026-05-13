@@ -21,3 +21,4 @@ _workspace/
 # Override global ~/.gitignore_global which excludes settings.json / launch.json
 !**/.claude/settings.json
 !**/.claude/skills/**
+.gstack/

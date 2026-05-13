@@ -1,0 +1,213 @@
+/* Studio 다크 미감 오버라이드 — Apple WWDC / Linear / Vercel tone */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  /* 베이스 다크 — 차갑지 않은 따뜻한 검정 */
+  --slidev-theme-bg: #0a0a0f;
+  --slidev-theme-bg-soft: #14141a;
+  --slidev-theme-surface: #1c1c24;
+  --slidev-theme-border: #2a2a35;
+
+  /* 포인트 색 — indigo 계열 (Vercel/Linear) */
+  --slidev-theme-primary: #818cf8;        /* indigo-400 */
+  --slidev-theme-primary-deep: #6366f1;   /* indigo-500 */
+  --slidev-theme-accent: #c084fc;         /* purple-400 */
+
+  /* 강조 — 따뜻한 화이트 */
+  --slidev-theme-text: #f4f4f5;
+  --slidev-theme-text-soft: #a1a1aa;
+  --slidev-theme-text-muted: #71717a;
+}
+
+/* 베이스 색·폰트 강제 적용 */
+html, body, #slidev-app {
+  background-color: var(--slidev-theme-bg) !important;
+  color: var(--slidev-theme-text) !important;
+}
+
+.slidev-layout {
+  background-color: var(--slidev-theme-bg) !important;
+  color: var(--slidev-theme-text);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  font-feature-settings: 'ss03', 'ss06';
+}
+
+/* 헤딩 — letter-spacing 깎고 weight 살림 */
+.slidev-layout h1 {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--slidev-theme-text);
+  font-size: 3.5em;
+}
+
+.slidev-layout h2 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  font-size: 2.4em;
+}
+
+.slidev-layout h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.6em;
+}
+
+/* center 레이아웃에서 헤딩 — 더 크게 */
+.slidev-layout[class*="cover"] h1,
+.slidev-layout[class*="center"] h1 {
+  font-size: 4.5em;
+  line-height: 1.0;
+}
+
+.slidev-layout[class*="cover"] h2,
+.slidev-layout[class*="center"] h2 {
+  font-size: 3em;
+  line-height: 1.1;
+}
+
+/* section 레이아웃의 챕터 헤더 — 임팩트 */
+.slidev-layout.section h1 {
+  font-size: 4em;
+  line-height: 1.05;
+}
+
+.slidev-layout strong {
+  color: var(--slidev-theme-primary);
+  font-weight: 700;
+}
+
+.slidev-layout em {
+  color: var(--slidev-theme-accent);
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* 인용 — boil the ocean 같은 어구용 */
+.slidev-layout blockquote {
+  border-left: 3px solid var(--slidev-theme-primary);
+  padding-left: 1.2em;
+  color: var(--slidev-theme-text-soft);
+  font-style: normal;
+}
+
+/* 코드 — 모노스페이스, 카본 풍 */
+.slidev-layout code,
+.slidev-layout pre {
+  font-family: 'JetBrains Mono', 'Pretendard Mono', 'SF Mono', Menlo, monospace;
+  background: #0d1117;
+}
+
+.slidev-layout :not(pre) > code {
+  background: var(--slidev-theme-surface);
+  color: var(--slidev-theme-primary);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.92em;
+  border: 1px solid var(--slidev-theme-border);
+}
+
+/* 표 — 다크 모드에서 자연스럽게 */
+.slidev-layout table {
+  border-collapse: collapse;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.slidev-layout th {
+  background: var(--slidev-theme-surface);
+  color: var(--slidev-theme-text);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.6em 0.9em;
+  border-bottom: 1px solid var(--slidev-theme-border);
+}
+
+.slidev-layout td {
+  padding: 0.5em 0.9em;
+  border-bottom: 1px solid var(--slidev-theme-border);
+  color: var(--slidev-theme-text-soft);
+}
+
+.slidev-layout tr:last-child td {
+  border-bottom: none;
+}
+
+/* 그라디언트 히어로 — 1·5·7장 키노트용 */
+.gradient-hero {
+  background: radial-gradient(
+    ellipse at top right,
+    rgba(99, 102, 241, 0.18),
+    rgba(192, 132, 252, 0.05) 40%,
+    transparent 70%
+  ), var(--slidev-theme-bg);
+}
+
+.gradient-hero h1 {
+  background: linear-gradient(
+    135deg,
+    var(--slidev-theme-text) 0%,
+    var(--slidev-theme-primary) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 데모 진입 호흡 — DemoBreak 슬라이드용 */
+.demo-break {
+  background: #000;
+  color: var(--slidev-theme-text);
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font-family: 'JetBrains Mono', 'Pretendard Mono', monospace;
+  letter-spacing: 0;
+}
+
+.demo-break .label {
+  color: var(--slidev-theme-text-muted);
+  font-size: 0.85em;
+  margin-bottom: 1.5em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.demo-break .command {
+  color: var(--slidev-theme-primary);
+  font-size: 1.4em;
+}
+
+/* 사다리 회수 시각화 — 7장 클로징 */
+.ladder li {
+  padding: 0.4em 0;
+  color: var(--slidev-theme-text-muted);
+  transition: color 0.3s;
+}
+
+.ladder li.active {
+  color: var(--slidev-theme-text);
+  font-weight: 600;
+}
+
+/* 슬라이드 번호·푸터 — 살짝 죽이기 */
+.slidev-page-foot,
+.slidev-page-number {
+  color: var(--slidev-theme-text-muted) !important;
+  opacity: 0.5;
+}
+
+/* Slidev 0.49 버그: goto 다이얼로그가 슬라이드 62개에서 -top-20 으로 가려지지 않음.
+   닫혀있을 때 완전히 숨기고, 열렸을 때만 표시. */
+#slidev-goto-dialog {
+  visibility: hidden;
+  pointer-events: none;
+}
+#slidev-goto-dialog.top-5 {
+  visibility: visible;
+  pointer-events: auto;
+}
