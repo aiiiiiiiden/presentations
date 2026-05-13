@@ -19,17 +19,16 @@ transition: fade
 
 <div class="absolute inset-0 grid place-content-center text-center">
 
-# Boil the Ocean,
-# <span class="opacity-30">________</span>
+# AI-First로 지식의 경계 확장하기
 
-<div class="text-xl text-zinc-500 mt-16 tracking-wide">
-  Aiden · Flutter Seoul · 2026-05-14
+<div class="text-3xl text-zinc-500 mt-16 tracking-wide">
+  Aiden · Flutter Seoul
 </div>
 
 </div>
 
 <style>
-.slidev-layout { background: radial-gradient(ellipse at center, rgba(99,102,241,0.12), transparent 60%), #0a0a0f; }
+.slidev-layout { background: radial-gradient(ellipse at center, rgba(234,0,44,0.14), transparent 80%), #0a0a0f; }
 </style>
 
 ---
@@ -92,7 +91,7 @@ title: Don't ↔ Boil
 
 <div>
 <div class="text-zinc-500 text-sm tracking-widest uppercase mb-4">2026.02</div>
-<div class="text-2xl font-bold leading-snug text-indigo-300">
+<div class="text-2xl font-bold leading-snug text-red-300">
 "Boil<br/>the ocean."
 </div>
 <div class="text-zinc-500 mt-6">— Garry Tan</div>
@@ -138,13 +137,13 @@ layout: section
 <div class="text-sm text-zinc-400 mt-2">RAG / LangChain / VectorDB</div>
 </div>
 
-<div class="border-l-2 border-indigo-500 pl-4">
+<div class="border-l-2 border-red-500 pl-4">
 <div class="text-zinc-500 text-xs tracking-widest uppercase">2024</div>
 <div class="text-lg font-bold mt-2">GPU · Cursor</div>
 <div class="text-sm text-zinc-400 mt-2">구독 모델 · 1.5x 생산성</div>
 </div>
 
-<div class="border-l-2 border-indigo-400 pl-4">
+<div class="border-l-2 border-red-400 pl-4">
 <div class="text-zinc-500 text-xs tracking-widest uppercase">2025</div>
 <div class="text-lg font-bold mt-2">Claude Code · Agent</div>
 <div class="text-sm text-zinc-400 mt-2">Command → MCP → Skill → Sub-Agent</div>
@@ -215,7 +214,7 @@ layout: center
 ## Skill만으론 — **외부 데이터에 닿는 손**이 없습니다.
 
 <div class="text-zinc-500 mt-12">
-6-6 MCP 데모의 복선. <span class="text-indigo-300">Harness는 7장에서 다시 회수</span>합니다.
+6-6 MCP 데모의 복선. <span class="text-red-300">Harness는 7장에서 다시 회수</span>합니다.
 </div>
 
 ---
@@ -379,7 +378,7 @@ claude -p --setting-sources project \
 </v-clicks>
 
 <div class="mt-8 text-zinc-500">
-<em>일반론</em> → <span class="text-indigo-300"><em>리포트 해석</em></span>
+<em>일반론</em> → <span class="text-red-300"><em>리포트 해석</em></span>
 </div>
 
 ---
@@ -398,7 +397,7 @@ class: bg-zinc-950
 
 <div class="text-lg mt-12 leading-relaxed">
 
-"<span class="text-indigo-300">너는 반도체섹터 전문가야.</span>
+"<span class="text-red-300">너는 반도체섹터 전문가야.</span>
 SK하이닉스의 종목 리포트인
 **20260511_[반도체] SK하이닉스.pdf** 파일을 참고해서
 주가를 상승·하락·횡보 확률로 예측해줘"
@@ -469,7 +468,7 @@ claude -p --setting-sources project \
 ```
 
 <div class="mt-10 text-zinc-500">
-페르소나 한 줄은 <em>사라졌습니다</em>. <span class="text-indigo-300">Skill이 자동으로 가져옵니다.</span>
+페르소나 한 줄은 <em>사라졌습니다</em>. <span class="text-red-300">Skill이 자동으로 가져옵니다.</span>
 </div>
 
 ---
@@ -538,7 +537,7 @@ layout: center
 
 ## **메타 도구를 안 쓸 이유가 없습니다.**
 
-<div class="mt-12 text-indigo-300 text-2xl font-bold">필수입니다.</div>
+<div class="mt-12 text-red-300 text-2xl font-bold">필수입니다.</div>
 
 ---
 layout: section
@@ -613,7 +612,7 @@ claude -p --setting-sources project \
 ```
 
 <div class="mt-8 text-zinc-500">
-수백 개 매뉴얼 중에서 <span class="text-indigo-300">SKT 분석에 필요한 것만</span> 골라옵니다.
+수백 개 매뉴얼 중에서 <span class="text-red-300">SKT 분석에 필요한 것만</span> 골라옵니다.
 </div>
 
 ---
@@ -662,19 +661,19 @@ layout: center
 <div class="grid grid-cols-3 gap-6 mt-8">
 
 <div class="border border-zinc-800 p-6 rounded-lg">
-<div class="text-indigo-400 text-sm tracking-widest uppercase">메시지</div>
+<div class="text-red-400 text-sm tracking-widest uppercase">메시지</div>
 <div class="text-2xl font-bold mt-3">Telegram</div>
 <div class="text-sm text-zinc-500 mt-4">즉시 분석 · <em>예약 알람</em></div>
 </div>
 
 <div class="border border-zinc-800 p-6 rounded-lg">
-<div class="text-indigo-400 text-sm tracking-widest uppercase">시간</div>
+<div class="text-red-400 text-sm tracking-widest uppercase">시간</div>
 <div class="text-2xl font-bold mt-3">Scheduler</div>
 <div class="text-sm text-zinc-500 mt-4">매일 7시 자동 리포트</div>
 </div>
 
 <div class="border border-zinc-800 p-6 rounded-lg">
-<div class="text-indigo-400 text-sm tracking-widest uppercase">상태</div>
+<div class="text-red-400 text-sm tracking-widest uppercase">상태</div>
 <div class="text-2xl font-bold mt-3">Monitor</div>
 <div class="text-sm text-zinc-500 mt-4">KOSPI 조건 만족 시</div>
 </div>
@@ -688,7 +687,7 @@ class: demo-break
 
 <div class="text-zinc-500 text-xs tracking-[0.3em] uppercase mb-6">휴대폰으로</div>
 
-<div class="text-2xl text-indigo-400 font-mono">
+<div class="text-2xl text-red-400 font-mono">
 @your_bot_name
 </div>
 
@@ -786,10 +785,10 @@ layout: center
 <div class="text-zinc-600 text-sm mt-3">→ 혼자 끝남</div>
 </div>
 
-<div class="border border-indigo-700 bg-indigo-950/20 p-6 rounded">
-<div class="text-indigo-300 text-sm">과정 공유</div>
+<div class="border border-red-700 bg-red-950/20 p-6 rounded">
+<div class="text-red-300 text-sm">과정 공유</div>
 <div class="text-zinc-300 mt-2">"이 Skill을 이렇게 짰고<br/>이 MCP를 이렇게 연결했어요"</div>
-<div class="text-indigo-400 text-sm mt-3">→ 옆 사람도 1000x</div>
+<div class="text-red-400 text-sm mt-3">→ 옆 사람도 1000x</div>
 </div>
 
 </div>

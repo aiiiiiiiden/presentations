@@ -10,10 +10,10 @@
   --slidev-theme-surface: #1c1c24;
   --slidev-theme-border: #2a2a35;
 
-  /* 포인트 색 — indigo 계열 (Vercel/Linear) */
-  --slidev-theme-primary: #818cf8;        /* indigo-400 */
-  --slidev-theme-primary-deep: #6366f1;   /* indigo-500 */
-  --slidev-theme-accent: #c084fc;         /* purple-400 */
+  /* 포인트 색 — SKT 브랜드 (T Red 계열) */
+  --slidev-theme-primary: #FF1F4D;        /* SKT Red - 다크 배경 가독성용 밝은 변형 */
+  --slidev-theme-primary-deep: #EA002C;   /* SKT Red - 공식 브랜드 컬러 */
+  --slidev-theme-accent: #FF6B00;         /* T Orange - 보조 강조 */
 
   /* 강조 — 따뜻한 화이트 */
   --slidev-theme-text: #f4f4f5;
@@ -144,8 +144,8 @@ html, body, #slidev-app, .slidev-layout, .slidev-page {
 .gradient-hero {
   background: radial-gradient(
     ellipse at top right,
-    rgba(99, 102, 241, 0.18),
-    rgba(192, 132, 252, 0.05) 40%,
+    rgba(234, 0, 44, 0.20),
+    rgba(255, 107, 0, 0.06) 40%,
     transparent 70%
   ), var(--slidev-theme-bg);
 }
