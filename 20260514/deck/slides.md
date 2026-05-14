@@ -63,6 +63,15 @@ class: text-2xl
 transition: fade
 ---
 
+<img
+  src="/Aiden_Transparency.png"
+  class="absolute right-(-30) bottom-0 h-full w-auto object-contain opacity-3/0 pointer-events-none"
+  style="z-index: 0;"
+  alt=""
+/>
+
+<div class="relative" style="z-index: 1;">
+
 <div class="text-8xl font-bold mb-10">소개</div>
 
 **플러터 서울** 오거나이저
@@ -72,6 +81,8 @@ transition: fade
 **(전) 카카오** 플랫폼·뱅킹·게임 서비스 개발
 
 **조선해양공학 중퇴** 후 뒤늦게 개발 시작
+
+</div>
 
 <!--
 먼저 제 소개를 하겠습니다.
