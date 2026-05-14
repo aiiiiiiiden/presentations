@@ -65,7 +65,7 @@ transition: fade
 
 <img
   src="/Aiden_Transparency.png"
-  class="absolute right-(-30) bottom-0 h-full w-auto object-contain opacity-3/0 pointer-events-none"
+  class="absolute right-(-30) bottom-0 h-full w-auto object-contain opacity-30 pointer-events-none"
   style="z-index: 0;"
   alt=""
 />
