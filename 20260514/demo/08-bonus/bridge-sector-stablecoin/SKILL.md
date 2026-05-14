@@ -1,7 +1,7 @@
 ---
 name: bridge-sector-stablecoin
 description: |
-  스테이블코인 섹터 전문 분석 리포트를 생성합니다. 글로벌 규제(GENIUS Act/MiCA/HK Ordinance/일본 PSA)와 한국 디지털자산기본법, 원화 스테이블코인 컨소시엄을 매크로로, PG·핀테크·은행지주·거래소 우회·STO·블록체인 IT 인프라를 밸류체인 트랙으로 분석합니다.
+  스테이블코인 섹터 전문 분석 리포트를 생성합니다. 글로벌 규제(GENIUS Act/MiCA/HK Ordinance/일본 PSA)와 한국 디지털자산기본법, 원화 스테이블코인 컨소시엄을 매크로로, PG·핀테크·은행지주·거래소 우회·STO·블록체인 IT 인프라를 밸류체인 트랙으로 분석합니다. KIS Open API로 미국 BTC/ETH 현물 ETF (IBIT/FBTC/ETHA/FETH/GBTC) 및 한국 가상자산 우회 종목(우리기술투자/한화투자증권/위지트/갤럭시아머니트리/위메이드/비덴트) 시세를 함께 수집해 가상자산 사이클과 연동 분석합니다.
   사용 시점: "스테이블코인 섹터", "원화 스테이블코인", "USDC USDT 분석", "stablecoin sector", "디지털자산 결제", "STO 토큰증권 결제"
 ---
 
@@ -173,12 +173,66 @@ You are a stablecoin sector specialist with deep domain expertise in global stab
 - **은행지주**: NIM + 비이자 수익 + 충당금. 스테이블코인 발행 옵션은 Forward EPS 컨센에 아직 미반영 (옵션 프리미엄 0)
 - **블록체인 IT (삼성SDS)**: 클라우드·SI 매출 모멘텀 + 블록체인 솔루션 신규 매출 인식 여부
 
+### 가상자산 우회 시세 데이터 (KIS Open API)
+
+스테이블코인 섹터는 글로벌 BTC/ETH 사이클과 직접 연동됩니다. KIS Open API는 암호화폐 현물 시세를 직접 제공하지 않지만, 다음 우회 경로로 비트코인/이더리움 자금흐름을 추적할 수 있습니다.
+
+#### A. 미국 BTC/ETH 현물 ETF (해외주식 시세 API)
+- **API**: `/uapi/overseas-price/v1/quotations/price`, TR-ID `HHDFS00000300`
+- **추적 ETF**:
+
+| 티커 | 거래소 | 상품명 | 추종 자산 | 시그널 |
+|---|---|---|---|---|
+| IBIT | NAS | iShares Bitcoin Trust | BTC 현물 | 글로벌 BTC 자금 유입 1위 (BlackRock) |
+| FBTC | NAS | Fidelity Wise Origin Bitcoin Fund | BTC 현물 | BTC 자금 유입 2위 |
+| GBTC | NYS | Grayscale Bitcoin Trust | BTC 현물 | 구버전 신탁 자금 유출 모니터링 |
+| ETHA | NAS | iShares Ethereum Trust | ETH 현물 | 글로벌 ETH 자금 유입 1위 |
+| FETH | NAS | Fidelity Ethereum Fund | ETH 현물 | ETH 자금 유입 2위 |
+
+- **읽는 법**: 평균 등락률 +2% 이상 → 가상자산 자금 유입 가속, -2% 이하 → 자금 유출. IBIT 거래량 증가 + GBTC 거래량 정상은 신규 자금 유입 신호 (재진입 자금 흡수)
+
+#### B. CME BTC/ETH 선물 (해외선물옵션 API, 옵션)
+- **API**: `/uapi/overseas-futureoption/v1/quotations/inquire-price`, TR-ID `HHDFC55010000`
+- 만기별 심볼 (예: BTCK6 = 2026 5월물) — 콘탱고/백워데이션 측정 가능
+- (현재 스크립트 미통합, 필요 시 별도 호출)
+
+#### C. 한국 가상자산 우회 종목 (국내주식 시세 API)
+- **API**: `/uapi/domestic-stock/v1/quotations/inquire-price`, TR-ID `FHKST01010100`
+
+| 종목 | 코드 | 우회 노출 | 비고 |
+|---|---|---|---|
+| 우리기술투자 | 041190 | 두나무 ~7.55% 지분 | T3 거래소 우회 — 두나무 NAV 재평가 핵심 |
+| 한화투자증권 | 003530 | 두나무 6.15% + STO | T3+T4 듀얼 노출 |
+| 위지트 | 036090 | 티사이언티픽(빗썸) 우회 | T3 거래소 우회 |
+| 갤럭시아머니트리 | 094480 | 빗썸 관련 + STO/NFT | T3+T6 듀얼 |
+| 위메이드 | 112040 | 위믹스 코인 발행사 | 가상자산 직접 노출(코인 발행) |
+| 비덴트 | 121800 | 빗썸 우회 | T3 거래소 우회 |
+
+#### 통합 스크립트
+- **위치**: `/Users/cody/stocks/apps/server/scripts/fetch-crypto-proxy.ts`
+- **실행**: `cd /Users/cody/stocks/apps/server && npx tsx scripts/fetch-crypto-proxy.ts --json`
+- **출력**: `{ btcEtfs, ethEtfs, koreanProxies, signals: { btcEtfAvgChangePct, ethEtfAvgChangePct, koreanProxyAvgChangePct, btcEtfMomentumRank, interpretation } }`
+- **인증**: `apps/server/.env`의 KIS_APP_KEY/KIS_APP_SECRET/KIS_PAPER 사용 (자동 토큰 발급 + 캐시)
+- **레이트 리밋**: 초당 5건 제한 회피를 위해 220ms 딜레이 + 순차 호출 (총 ~3초 소요)
+
+#### 시그널 해석 매트릭스
+
+| btcEtfAvg | 한국 우회 종목 평균 | 종합 시그널 | 스테이블코인 섹터 영향 |
+|---:|---:|---|---|
+| > +2% | > +2% | **강한 가상자산 강세** | 두나무·빗썸 IPO 모멘텀 ↑, 거래소 우회주 매수세 가속, STO 증권사 자금 유입 |
+| > 0% | > 0% | 완만한 강세 | 카카오페이·결제 인프라 거래량 ↑ |
+| ±0% | ±0% | 횡보 | 매크로 트리거 대기 (디지털자산기본법 진척도) |
+| < 0% | < 0% | 완만한 약세 | T3 거래소 우회 종목 단기 압박 |
+| < -2% | < -2% | **강한 약세 (디지털 금 자금 이동)** | BTC ETF 자금 GLD 등 안전자산으로 이동 시 스테이블코인 섹터 전반 압박 |
+| 디버전스 (BTC < 0, 한국우회 > +2%) | - | 단발성 컨소시엄/정책 뉴스 | 한국 디지털자산기본법 진척 모멘텀 |
+
 ### 다른 섹터 스킬과의 관계
 
 - **bridge-sector-finance**: 은행지주·인터넷은행·핀테크는 본 스킬과 중복. 본 스킬은 "스테이블코인 발행·결제 옵션" 관점에서만 다루고, 금융 본업(NIM·CET1·배당) 분석은 `bridge-sector-finance` 영역
 - **bridge-sector-securities**: NH투자/한화우/미래에셋 등 증권사는 본 스킬에서 "STO 인프라 관점"만 다루고, 거래대금·IB·자산운용 본업은 `bridge-sector-securities`
 - **bridge-sector-it**: 카카오페이·삼성SDS는 본 스킬에서 "스테이블코인 결제·블록체인 인프라" 관점만, 플랫폼·클라우드 본업은 `bridge-sector-it`
 - **bridge-sector-vc**: 우리기술투자는 본 스킬에서 "두나무 지분 가치" 관점, VC 본업 포트폴리오는 `bridge-sector-vc`
+- **bridge-sector-precious-metals**: BTC ETF 자금흐름은 GLD/SLV 자금흐름과 경합 (디지털 금 vs 금속 금). BTC 자금 유출 시 GLD 자금 유입 가능성 → 두 스킬의 자금흐름 시그널을 교차 검증
 
 ## 실행 모드
 
@@ -219,6 +273,33 @@ ToolSearch({ query: "select:mcp__bridgestock__get-us-treasury-yields,mcp__bridge
 1-10. `get-market-condition`, `get-sector-list`, `get-sector-performance`, `get-theme-list`, `recommend-by-sector`, `get-event-calendar`, `get-program-trading(STK)`, `get-program-trading(KSQ)`, `get-etf-changes`, `get-index-changes`
 
 11-15. **매크로**: `get-us-treasury-yields`, `get-yield-curve`, `get-credit-spreads`, `get-fed-rate-path`, `get-cpi-yoy` — Treasury 수요/스테이블코인 준비금 매크로 신호 추적
+
+### 2.5단계: KIS 가상자산 우회 시세 수집 (Bash 실행, 병렬과 별개)
+
+스테이블코인은 글로벌 가상자산 사이클과 연동되므로 KIS Open API를 통해 BTC/ETH ETF 및 한국 우회 종목 시세를 수집합니다. 본 단계는 MCP 도구가 아닌 **bash 직접 실행**입니다.
+
+```bash
+cd /Users/cody/stocks/apps/server && npx tsx scripts/fetch-crypto-proxy.ts --json 2>/dev/null
+```
+
+응답 JSON 구조:
+- `btcEtfs`: IBIT/FBTC/GBTC 현재가·거래량·등락률
+- `ethEtfs`: ETHA/FETH 현재가·거래량·등락률
+- `koreanProxies`: 우리기술투자(041190)/한화투자증권(003530)/위지트(036090)/갤럭시아머니트리(094480)/위메이드(112040)/비덴트(121800) 현재가·등락률·거래대금
+- `signals.btcEtfAvgChangePct`, `signals.ethEtfAvgChangePct`, `signals.koreanProxyAvgChangePct`: 그룹별 평균 등락률
+- `signals.btcEtfMomentumRank`: 등락률 정렬 BTC ETF 랭킹
+- `signals.interpretation`: 자금흐름 1줄 해석
+
+#### 주의사항
+- KIS API는 **초당 5건** 레이트 리밋이 있어 스크립트가 220ms 딜레이로 순차 호출 (총 ~3초)
+- 일부 ETF/종목은 `empty`/`error` 응답 가능 (시장 휴장, 거래소 코드 불일치, 권한 누락) → JSON의 `status` 필드 확인
+- KIS 토큰은 24시간 캐시되며 `/tmp/kis-token-real-*.json`에 저장됨
+- 실패 시에도 분석은 계속 진행 (가상자산 보조 신호 누락만으로는 분석 중단하지 않음)
+
+#### 응답 활용
+- 6단계 리포트의 **"스테이블코인-가상자산 매크로 연동"** 섹션에 반영
+- T3 거래소 우회 종목(우리기술투자·한화투자증권·위지트) 상세 분석 시 **KIS 실시간가 + 등락률** 비교 활용
+- BTC ETF 평균 등락률을 두나무·빗썸 IPO 모멘텀 평가의 매크로 신호로 사용
 
 ### 3단계: 스테이블코인 관련 섹터/테마 소속 종목 조회 (병렬)
 
@@ -270,6 +351,20 @@ ToolSearch({ query: "select:mcp__bridgestock__get-us-treasury-yields,mcp__bridge
    - **신용·매크로** (`get-credit-spreads`, `get-cpi-yoy`, `get-fed-rate-path`): Risk-On/Off, Fed 인하 경로와 Circle 등 발행사 마진 영향
    - **한국 컨소시엄 지형도**: 하나금융 6사 컨소시엄, KB+토스+삼성카드, Project Pax(신한·NH·케이뱅크), 카카오 단독, 토스 단독 — 표로 정리
    - **준비금 모델 비교**: USDT(T-bill 63%), USDC(풀백킹), 한국안(100% 은행예금+국채) — 수익률·안전성·시스템 리스크 비교
+
+3.5. **스테이블코인-가상자산 매크로 연동** (2.5단계 KIS 데이터 활용)
+   - **BTC ETF 자금흐름**: IBIT/FBTC/GBTC 현재가·거래량·등락률 테이블 (KIS 응답)
+     - IBIT 거래량 증가 = 신규 BTC 자금 유입, GBTC 거래량 감소 = 구신탁 자금 잔존
+   - **ETH ETF 자금흐름**: ETHA/FETH 현재가·등락률
+   - **한국 가상자산 우회 종목 시세 (실시간 KIS)**:
+     - 우리기술투자(041190), 한화투자증권(003530), 위지트(036090), 갤럭시아머니트리(094480), 위메이드(112040), 비덴트(121800)
+     - bridgestock의 일중 시세와 교차 검증, 차이 발생 시 KIS 우선
+   - **시그널 해석**:
+     - btcEtfAvgChangePct + koreanProxyAvgChangePct **동방향 강세** → 두나무·빗썸 IPO 모멘텀 강화, T3 거래소 우회주 매수 적기
+     - btcEtfAvgChangePct **약세** + koreanProxyAvgChangePct **강세** → 국내 정책 모멘텀 단발성 신호 (한국 디지털자산기본법 진척도 점검)
+     - btcEtfAvgChangePct **강세** + koreanProxyAvgChangePct **약세** → 글로벌-로컬 디버전스, 국내 매물 소화 진행 중
+     - 양쪽 모두 **약세** → 디지털 금 자금 이동 (GLD 등 안전자산 유입 가능성 → `bridge-sector-precious-metals`와 교차 검증)
+   - **위메이드 위믹스 코인 노출**: 위메이드는 자체 코인(WEMIX) 발행사로 BTC 사이클과 직접 동조. 위메이드 등락률이 BTC ETF와 같은 방향이면 가상자산 사이클 신호로 해석
 
 4. **섹터/테마 동향**
    - 스테이블코인·STO·가상자산·핀테크·인터넷은행 테마 등락률
@@ -334,6 +429,7 @@ python3 ~/.claude/skills/md-to-pdf/scripts/md2pdf.py "{MD파일경로}" -o "{같
 - **글로벌 규제 진척도 한 줄 요약**: 미국(GENIUS Act 발효 D-day)·EU(MiCA 정상가동)·일본(JPYC 가동)·홍콩(첫 라이선스 발급)·한국(법안 표류)
 - **한국 컨소시엄 지형 1줄**: 하나금융 주도 6사 / KB-토스-삼성카드 / 카카오 단독 / Project Pax
 - **티어별 강도**: T1~T6 중 오늘 가장 강한 티어와 약한 티어
+- **가상자산 사이클 위치 한 줄**: BTC ETF 평균 등락률(IBIT/FBTC/GBTC) + ETH ETF 평균(ETHA/FETH) + 한국 우회 종목 평균(041190/003530/036090/094480/112040/121800) + 자금흐름 해석 (KIS 데이터 기반)
 - 핵심 종목 TOP 5 (종목명 + 티어 + 노출 강도 + 핵심 포인트)
 
 ## 주의사항
@@ -347,3 +443,13 @@ python3 ~/.claude/skills/md-to-pdf/scripts/md2pdf.py "{MD파일경로}" -o "{같
 - 인터넷은행(케이뱅크)이 비상장이면 컨소시엄 컨텍스트로만 다루고, 분석 대상 5종에 포함하지 않음
 - **`scan-quiet-accumulation` 도구를 사용하지 마세요** — 조용한 매집 스캔은 별도 스킬(`/bridge-quiet-accumulation`)로만 실행합니다
 - 금융 본업 분석은 `bridge-sector-finance`, 증권 본업은 `bridge-sector-securities`로 위임 — 본 스킬은 스테이블코인 옵션 가치에 집중
+
+### KIS 데이터 수집 관련 주의사항
+
+- **KIS Open API 인증**: `apps/server/.env`의 `KIS_APP_KEY` / `KIS_APP_SECRET` / `KIS_PAPER` 환경변수 필요. 누락 시 2.5단계 스킵 후 분석은 계속 진행 (가상자산 보조 신호 누락만으로 분석 중단 금지)
+- **레이트 리밋**: KIS는 초당 ~5건 제한. 스크립트가 220ms 딜레이로 순차 호출 (총 ~3초 소요). 다른 KIS 호출과 동시 실행 시 충돌 가능
+- **토큰 캐시**: `/tmp/kis-token-real-*.json`에 24시간 캐시. 토큰 갱신 실패 시 `resetKisTokenCache()` 호출 (kis-auth.ts) 또는 캐시 파일 수동 삭제
+- **시장 휴장**: 미국 ETF는 한국 시간 22:30~05:00 정규장. 휴장 시간대에는 전일 종가 반영. 한국 종목은 09:00~15:30 정규장. 휴장 시 스크립트는 전일 종가 반환
+- **응답 불일치**: 일부 ETF(FBTC, FETH, GBTC)는 종종 `empty` 반환 — KIS 마스터 데이터 누락 가능성. 시그널은 ok 응답만으로 계산되므로 분석 영향 제한적
+- **종목 코드 검증**: KIS 한국주식 API는 6자리 코드만 수용. 우회 종목 풀이 변경되면 `apps/server/scripts/fetch-crypto-proxy.ts`의 `koreanDefs` 배열 갱신 필요
+- **bridgestock vs KIS 시세 차이**: 같은 종목을 양쪽에서 조회 시 KIS가 더 실시간(틱 단위), bridgestock은 분 단위 지연. **실시간성이 중요한 시그널은 KIS 우선**, 기술적 지표 계산에는 bridgestock 우선
